@@ -24,7 +24,7 @@ const Home = () => {
             if (!localStorage.getItem("_id")) {
                 navigate("/");
             } else {
-                fetch("http://localhost:4000/api/all/threads")
+                fetch("https://collab-ve2d.onrender.com/api/all/threads")
                 .then((res) => res.json())
                 .then((data) => setThreadList(data.threads))
                 .catch((err) => console.error(err));
@@ -34,7 +34,7 @@ const Home = () => {
     }, [navigate]);
 
     const createThread = () => {
-        fetch("http://localhost:4000/api/create/thread", {
+        fetch("https://collab-ve2d.onrender.com/api/create/thread", {
             method: "POST",
             body: JSON.stringify({
                 thread,

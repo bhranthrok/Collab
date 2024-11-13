@@ -9,7 +9,7 @@ const Register = () => {
     const navigate = useNavigate();
 
     const signUp = () => {
-        fetch("http://localhost:4000/api/register", {
+        fetch("https://collab-ve2d.onrender.com/api/register", {
             method: "POST",
             body: JSON.stringify({
                 email,

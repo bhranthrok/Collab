@@ -10,7 +10,7 @@ const Replies = () => {
     const { id } = useParams();
 
     const addReply = () => {
-		fetch("http://localhost:4000/api/create/reply", {
+		fetch("https://collab-ve2d.onrender.com/api/create/reply", {
 			method: "POST",
 			body: JSON.stringify({
 				id,
@@ -31,7 +31,7 @@ const Replies = () => {
 
     useEffect(() => {
         const fetchReplies = () => {
-            fetch("http://localhost:4000/api/thread/replies", {
+            fetch("https://collab-ve2d.onrender.com/api/thread/replies", {
                 method: "POST",
                 body: JSON.stringify({
                     id,

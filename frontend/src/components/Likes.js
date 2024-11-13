@@ -8,7 +8,7 @@ const Likes = ({ numberOfLikes, threadId }) => {
         // Prevents from clicking on thread itself
         e.stopPropagation();
 
-        fetch("http://localhost:4000/api/thread/like", {
+        fetch("https://collab-ve2d.onrender.com/api/thread/like", {
             method: "POST",
             body: JSON.stringify({
                 threadId,

@@ -15,7 +15,7 @@ const Login = () => {
     const navigate = useNavigate();
 
     const loginUser = () => {
-        fetch("http://localhost:4000/api/login", {
+        fetch("https://collab-ve2d.onrender.com/api/login", {
             method: "POST",
             body: JSON.stringify({
                 email,
