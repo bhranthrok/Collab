@@ -8,7 +8,7 @@ const PORT = 4000;
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 app.use(cors(
-    {origin: "https://collab-ve2d.onrender.com"}
+    {origin: "https://c0llab.netlify.app"} // Enables frontend requests
 ));
 
 app.get("/api", (req, res) => {
