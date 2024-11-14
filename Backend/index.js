@@ -1,7 +1,7 @@
 // Node.js Server Setup
 const express = require("express");
 const cors = require("cors");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const app = express();
 const PORT = 4000;
