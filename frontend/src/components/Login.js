@@ -40,7 +40,7 @@ const Login = () => {
     return (
         <>
         <nav className='navbar'>
-            <img className="logo" src="/Collab logo.png" alt="Collab Logo" style={{width: '200px', height: 'auto'}}/>
+            <img className="loginLogo" src="/Collab logo.png" alt="Collab Logo" style={{width: '200px', height: 'auto'}}/>
         </nav>
         <main className='login'>
             <h1 className='loginTitle'>Log in</h1>

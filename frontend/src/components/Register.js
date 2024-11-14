@@ -43,7 +43,7 @@ const Register = () => {
     return (
         <>
         <nav className='navbar'>
-            <img className="logo" src="/Collab logo.png" alt="Collab Logo" style={{width: '200px', height: 'auto'}}/>
+            <img className="loginLogo" src="/Collab logo.png" alt="Collab Logo" style={{width: '200px', height: 'auto'}}/>
         </nav>
         <main className='register'>
             <h1 className='registerTitle'>Create an account</h1>

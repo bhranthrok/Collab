@@ -72,14 +72,18 @@ const Home = () => {
                         />
                     </div>
                     <div className="button_container">
-                        <button className='modalBtn'>POST</button>
+                        <button className='modalBtn'>Post</button>
                     </div>
                 </form>
 
                 <div className='thread_container'>
                     {threadList.map((thread) => (
                         <div className='thread_item' key={thread.id} onClick={() => goToThread(thread.id)}>
-                            <p className="thread_title">{thread.title}</p>
+
+                            <div className="threadTitleContainer">
+                                <p className="postUsername" style={{opacity: "0.5" }}>- {thread.username}</p>
+                                <p className="thread_title">{thread.title}</p>
+                            </div>
                             <div className='reactions_container'>
                                 <Likes numberOfLikes={thread.likes.length} threadId = {thread.id}/>
                                 <Comments 

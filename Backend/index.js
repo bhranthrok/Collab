@@ -1,6 +1,7 @@
 // Node.js Server Setup
 const express = require("express");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 
 const app = express();
 const PORT = 4000;
@@ -29,13 +30,15 @@ app.post("/api/register", async (req, res) => {
     const { email, password, username } = req.body;
     const id = generateID();
     
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     // Checks for existing user
     const result = users.filter(
-        (user) => user.email === email && user.password === password
-    );
+        (user) => user.email === email);
     
     if (result.length === 0) {
-        const newUser = { id, email, password, username };
+        const newUser = { id, email, password: hashedPassword, username };
         users.push(newUser);
         return res.json({
             message: "Account created successfully!",
@@ -48,22 +51,31 @@ app.post("/api/register", async (req, res) => {
 });
 
 // Login Request
-app.post("/api/login", (req, res) => {
+app.post("/api/login", async (req, res) => {
     const { email, password } = req.body;
     // Checks for user
-    let result = users.filter(
-        (user) => user.email === email && user.password === password
-    );
+    const user = users.find((user) => user.email === email);
+
     // User doesn't exist
-    if (result.length !== 1) {
+    if (!user) {
         return res.json({
             error_message: "Incorrect credentials",
         });
     }
-    // Returns id
+
+    const match = await bcrypt.compare(password, user.password);
+
+    // Wrong password
+    if (!match) {
+        return res.json({
+            error_message: "Incorrect credentials",
+        });
+    }
+
+    // Successful login
     res.json({
         message: "Login successfully",
-        id: result[0].id,
+        id: user.id,
     });
 });
 
@@ -73,16 +85,17 @@ app.post("/api/create/thread", async (req, res) => {
 const { thread, userId } = req.body;
 const threadId = generateID();
 
-    //👇🏻 add post details to the array
+const user = users.filter((user) => user.id === userId);
+
     threadList.unshift({
         id: threadId,
         title: thread,
         userId,
+        username: user[0].username,
         replies: [],
         likes: [], // Array of users who like the thread
     });
 
-    //👇🏻 Returns a response containing the posts
     res.json({
         message: "Thread created successfully!",
         threads: threadList,
@@ -96,7 +109,7 @@ app.get("/api/all/threads", (req, res) => {
     });
 });
 
-// Shows all posts
+// Shows all users
 app.get("/api/all/users", (req, res) => {
     res.json({
         users: users,
@@ -144,6 +157,7 @@ app.post("/api/create/reply", async (req, res) => {
     const result = threadList.filter((thread) => thread.id === id);
     // Finds User
     const user = users.filter((user) => user.id === userId);
+
     // Adds the reply to the replies array
     result[0].replies.unshift({
         userId: user[0].id,
