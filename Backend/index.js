@@ -1,7 +1,7 @@
 // Node.js Server Setup
 const express = require("express");
 const cors = require("cors");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const {S3Client, PutObjectCommand} = require("@aws-sdk/client-s3");
 require('dotenv').config({path: './info.env'});
