@@ -11,6 +11,7 @@ a {
 .register,
 .login,
 .home,
+.profile,
 .replies,
 .modal {
 	padding-top: 8rem;
@@ -137,6 +138,7 @@ a {
 }
 .thread_item {
 	transition: all .5s ease;
+	transition: transform 0.5s ease;
 	border-radius: 0.5rem;
 	cursor: pointer;
 	padding: 20px;
@@ -149,10 +151,18 @@ a {
 	overflow: hidden;
 	margin-bottom: 1.5rem;
 	box-shadow: 0 0 0.5rem 0.05rem #6F26E0;
-
 }
 .thread_item:hover {
 	box-shadow: 0 0 0.5rem 0.2rem #6F26E0;
+	animation: bounce 0.2s infinite alternate;
+}
+@keyframes bounce {
+    0% {
+        transform: scale(1); /* Original size */
+    }
+    100% {
+        transform: scale(1.025); /* Slightly larger size */
+    }
 }
 .postUsername {
 	color:white;
@@ -234,7 +244,7 @@ a {
 	box-shadow: 0 0 3rem black;
 	border-radius: 1rem;
 	justify-content: left;
-	transition: box-shadow 1s ease;
+	transition: box-shadow 1s ease
 }
 .replies textarea:hover{
 	box-shadow: 0 0 0.3rem 0.1rem #6F26E0;
@@ -331,8 +341,121 @@ a {
 	cursor: pointer;
 	border-radius: 3px;
 }
-
 .navbarRight > button:hover {
 	color: white;
 	background-color: black;
+}
+.profileIconWrapper {
+	margin-top: 4%;
+	border: 1px solid transparent;
+	border-radius: 50%;
+}
+.profileIconWrapper :hover{
+	transition: border 0.5s ease;
+	border: 1px solid #6F26E0;
+	border-radius: 50%;
+}
+.profile {
+	padding-top: 10rem;
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	align-items: center;
+	justify-content: normal;
+	background-color: #160F21;
+	color: rgba(255, 255, 255, 0.5);
+	color:white;
+}
+.profileContainer {
+	display:flex;
+	flex-direction: column;
+	background-color: #280D54;
+	align-items: center;
+	width: 35%;
+	height: 90vh;
+	border-top-left-radius: 2rem;
+	border-top-right-radius: 2rem;
+
+	transform: translateY(100%); /* Start off-screen */
+    opacity: 0;
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+}
+.profileContainer.active {
+    transform: translateY(0); /* Move into position */
+    opacity: 1;
+}
+.profilePicture {
+	margin-top: 3rem;
+	width: 10rem;
+	height: 10rem;
+	border-radius: 50%;
+	border: 1px solid #280D54;
+	margin-bottom: 1rem;
+}
+.profile h1{
+	color: white;
+	font-size: 4rem;
+	margin-bottom: 2rem;
+	text-shadow: 0.4rem 0.4rem 0.3rem black;
+}
+.profile .uploadForm p{
+	margin-bottom: 0.1rem;
+}
+.profile  audio{
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+.changePreview{
+	margin-bottom: 0.5rem;
+}
+.previewDescription {
+	opacity: 0.5;
+	font-size: 0.875rem;
+}
+.uploadForm {
+	border-radius: 1rem;
+	padding: 10px;
+}
+.profile .modalBtn {
+	background-color:black;
+	box-shadow: 0 0 0.5rem 0.3rem #6F26E0;
+}
+.profile .modalBtn:hover{
+	background-color:#6F26E0;
+}
+.homeForm, .thread_container {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUp 0.5s ease forwards;
+}
+
+/* Separate delay for each component */
+.homeForm {
+    animation-delay: 0.1s;
+}
+.thread_container {
+    animation-delay: 0.3s;
+}
+.replies .titleContainer,
+.replies .modal_content {
+	animation: fadeIn 1s ease-out;
+}
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.replies_container {
+	opacity: 0;
+    transform: translateY(10rem);
+    animation: slideUp 0.5s ease forwards;
+}
+@keyframes slideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

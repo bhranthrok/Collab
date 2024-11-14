@@ -6,6 +6,7 @@ const Replies = () => {
     const [replyList, setReplyList] = useState([]);
     const [reply, setReply] = useState("");
     const [title, setTitle] = useState("");
+    const [isActive, setIsActive] = useState(false); // For Animation
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -30,6 +31,8 @@ const Replies = () => {
 	};
 
     useEffect(() => {
+        setIsActive(true);
+
         const fetchReplies = () => {
             fetch("https://collab-ve2d.onrender.com/api/thread/replies", {
                 method: "POST",
@@ -85,12 +88,12 @@ const Replies = () => {
                     className='modalInput'
                 />
                 <div className="button_container">
-                    <button className='modalBtn'>SEND</button>
+                    <button className='modalBtn'>Send</button>
                 </div>
                 
             </form>
     
-            <div className='replies_container'>
+            <div className={`replies_container ${isActive ? 'slideUp' : ''}`}>
                 {replyList.map((reply) => (
                     <div className='reply'>
                             <div>

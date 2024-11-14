@@ -1,7 +1,22 @@
 // Node.js Server Setup
 const express = require("express");
 const cors = require("cors");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
+const multer = require("multer");
+const {S3Client, PutObjectCommand} = require("@aws-sdk/client-s3");
+require('dotenv').config({path: './info.env'});
+
+// Configure AWS SDK with credentials from the environment
+const s3Client = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    }
+})
+
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage});
 
 const app = express();
 const PORT = 4000;
@@ -38,7 +53,7 @@ app.post("/api/register", async (req, res) => {
         (user) => user.email === email);
     
     if (result.length === 0) {
-        const newUser = { id, email, password: hashedPassword, username };
+        const newUser = { id, email, password: hashedPassword, username, storedAudioUrl: null};
         users.push(newUser);
         return res.json({
             message: "Account created successfully!",
@@ -140,13 +155,15 @@ app.post("/api/thread/like", (req, res) => {
 
 app.post("/api/thread/replies", (req, res) => {
     // Post Id
-    const { id } = req.body;
+    const { postId } = req.body;
     // Finds Post
-    const result = threadList.filter((thread) => thread.id === id);
+    const result = threadList.filter((thread) => thread.id === postId);
     // Returns replies and titles
     res.json({
+        id: postId,
         replies: result[0].replies,
         title: result[0].title,
+        username: result[0].username
     });
 });
 
@@ -168,4 +185,38 @@ app.post("/api/create/reply", async (req, res) => {
     res.json({
         message: "You Replied!",
     });
+});
+
+app.post("/api/upload", upload.single('audioFile'), async (req, res) => {
+    const file = req.file;
+
+    if (!file) {
+        return res.status(400).json({error: 'File not received'});
+    }
+
+    const fileName = Date.now() + '-' + file.originalname;
+
+    // Sets Parameters
+    const uploadParams = {
+        Bucket: 'collab-forum-amz-s3-bucket',
+        Key: fileName,
+        Body: file.buffer,
+        ContentType: 'audio/mpeg',
+      };
+      
+    // Upload the file to S3 bucket
+    try {
+        const data = await s3Client.send(new PutObjectCommand(uploadParams));
+        const fileUrl = `https://${uploadParams.Bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`
+        
+        const user = users.find(user => user.id === req.body.userId);
+        user.storedAudioUrl = fileUrl;
+
+        res.json({
+            message: 'File uploaded successfully!',
+            fileUrl: fileUrl,
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Upload to S3 failed', details: err.message });
+    }
 });

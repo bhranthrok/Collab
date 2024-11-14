@@ -12,6 +12,9 @@ const Home = () => {
     // Array with all posts
     const [threadList, setThreadList] = useState([]);
 
+    // Audio
+    const [currentAudio, setCurrentAudio] = useState(null);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         createThread();
@@ -20,6 +23,7 @@ const Home = () => {
 
     // Checks if User is logged in
     useEffect(() => {
+        setIsActive(true);
         const checkUser = () => {
             if (!localStorage.getItem("_id")) {
                 navigate("/");
@@ -55,6 +59,61 @@ const Home = () => {
         navigate(`/${threadId}/replies`);
     }
 
+    // Gets Audio based on thread and its author's id
+    const getAudio = async (thread) => {
+        try {
+            const response = await fetch('https://collab-ve2d.onrender.com/api/all/users');
+            const data = await response.json();
+            const user = data.users.find(user => user.id === thread.userId);
+
+            if (user) {
+                return user.storedAudioUrl;  // Return the audio URL directly
+            } else {
+                console.error("User not found");
+                return null;  // Return null if user is not found
+            }
+        } catch (err) {
+            console.error("Failed to fetch user", err);
+            return null;  // Return null if there's an error
+        }
+    };
+
+    // Add audioUrl fetch
+    const playAudio = async (thread) => {
+        // If audio already playing, stop it
+        if (currentAudio && currentAudio.src !== "") {
+            currentAudio.pause();
+            currentAudio.src = "";  // Reset the previous audio source
+        }
+
+        // Get the audio URL
+        const audioUrl = await getAudio(thread); // Await the result of getAudio
+
+        if (audioUrl) {
+            const audio = new Audio(audioUrl);
+            audio.volume = 0.65;
+            audio.play().catch(error => {
+                console.error("Audio play failed: ", error);
+            });
+
+            setCurrentAudio(audio);  // Store the current audio
+        }
+    }
+
+    const stopAudio = () => {
+        if (currentAudio) {
+            currentAudio.pause();
+            setCurrentAudio(null);
+        }
+    };
+
+    const handleThreadClick = (thread) => {
+        stopAudio();
+        goToThread(thread.id);
+    }
+
+    const [isActive, setIsActive] = useState(false); // For Animation
+
     return (
         <>
             <Nav />
@@ -69,6 +128,7 @@ const Home = () => {
                             required
                             value={thread}
                             onChange={(e) => setThread(e.target.value)}
+                            placeholder="What's on your mind?"
                         />
                     </div>
                     <div className="button_container">
@@ -78,8 +138,12 @@ const Home = () => {
 
                 <div className='thread_container'>
                     {threadList.map((thread) => (
-                        <div className='thread_item' key={thread.id} onClick={() => goToThread(thread.id)}>
-
+                        <div className='thread_item' 
+                            key={thread.id} 
+                            onClick={() => handleThreadClick(thread)}
+                            onMouseEnter={() => playAudio(thread)}
+                            onMouseLeave={stopAudio}
+                            >
                             <div className="threadTitleContainer">
                                 <p className="postUsername" style={{opacity: "0.5" }}>- {thread.username}</p>
                                 <p className="thread_title">{thread.title}</p>
