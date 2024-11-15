@@ -155,15 +155,13 @@ app.post("/api/thread/like", (req, res) => {
 
 app.post("/api/thread/replies", (req, res) => {
     // Post Id
-    const { postId } = req.body;
+    const { id } = req.body;
     // Finds Post
-    const result = threadList.filter((thread) => thread.id === postId);
+    const result = threadList.filter((thread) => thread.id === id);
     // Returns replies and titles
     res.json({
-        id: postId,
         replies: result[0].replies,
         title: result[0].title,
-        username: result[0].username
     });
 });
 
